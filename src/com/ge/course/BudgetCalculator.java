@@ -1,3 +1,5 @@
+package com.ge.course;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -15,7 +17,7 @@ public class BudgetCalculator {
 
     }
 
-    public int queryBudget(LocalDate startDate,LocalDate endDate){
+    public int queryBudget(LocalDate startDate, LocalDate endDate) {
         int calculatedBudget = 0;
 
         long totalDays = DAYS.between(startDate,endDate)+1;
@@ -24,8 +26,7 @@ public class BudgetCalculator {
 
         if(startDate.getYear() == endDate.getYear() && startDate.getMonth() == endDate.getMonth()){
             calculatedBudget = (int)(getBudgetOfMonth(startDate)/startDate.lengthOfMonth() * totalDays);
-        }
-        else{
+        } else {
             int firstMounthDays = (int)DAYS.between(startDate,LocalDate.of(startDate.getYear(),startDate.getMonth(),startDate.lengthOfMonth()))+1;
             calculatedBudget += (int)(getBudgetOfMonth(startDate))/startDate.lengthOfMonth() * firstMounthDays;
 
@@ -39,8 +40,7 @@ public class BudgetCalculator {
                 if(currentStartDate.getMonthValue() == 12){
                     date = LocalDate.of(currentStartDate.getYear()+1,1,1);
                     calculatedBudget += getBudgetOfMonth(date);
-                }
-                else{
+                } else {
                     date = LocalDate.of(currentStartDate.getYear(),currentStartDate.getMonthValue()+1,1);
                     calculatedBudget += getBudgetOfMonth(date);
                 }

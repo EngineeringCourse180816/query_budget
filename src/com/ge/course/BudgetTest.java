@@ -1,3 +1,5 @@
+package com.ge.course;
+
 import org.junit.Test;
 
 import java.time.LocalDate;
