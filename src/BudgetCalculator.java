@@ -56,7 +56,6 @@ public class BudgetCalculator {
     }
 
     private int getBudgetOfMonth(LocalDate date){
-        BudgetDao budgetDao = new BudgetDao();
         List<Budget> allBudgetList = budgetDao.findAll();
         for(Budget budget : allBudgetList){
             if(budget.getDate().getYear()==date.getYear() && budget.getDate().getMonth()==date.getMonth()){
