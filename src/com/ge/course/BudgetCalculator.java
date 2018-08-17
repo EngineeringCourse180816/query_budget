@@ -23,13 +23,14 @@ public class BudgetCalculator {
         long calculatedBudget = 0;
 
         Budget firstBudget = getAmountOfBudgetMonth(startDate);
-        calculatedBudget += firstBudget.getDailyAmount() * (DAYS.between(startDate, startDate.withDayOfMonth(startDate.lengthOfMonth())) + 1);
+        calculatedBudget += firstBudget.getDailyAmount() * (DAYS.between(startDate, firstBudget.getEndDate()) + 1);
 
         Budget lastBudget = getAmountOfBudgetMonth(endDate);
-        calculatedBudget += lastBudget.getDailyAmount() * (DAYS.between(endDate.withDayOfMonth(1), endDate) + 1);
+        calculatedBudget += lastBudget.getDailyAmount() * (DAYS.between(lastBudget.getStartDate(), endDate) + 1);
 
         for (LocalDate currentStartDate = startDate.plusMonths(1).withDayOfMonth(1); !YearMonth.from(currentStartDate).equals(YearMonth.from(endDate)); currentStartDate = currentStartDate.plusMonths(1)) {
-            calculatedBudget += getAmountOfBudgetMonth(currentStartDate).getAmount();
+            Budget budget = getAmountOfBudgetMonth(currentStartDate);
+            calculatedBudget += budget.getDailyAmount() * (DAYS.between(budget.getStartDate(), budget.getEndDate()) + 1);
         }
 
         return calculatedBudget;

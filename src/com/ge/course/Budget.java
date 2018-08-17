@@ -26,4 +26,12 @@ public class Budget {
     public int getDailyAmount() {
         return amount / date.lengthOfMonth();
     }
+
+    public LocalDate getStartDate() {
+        return date.withDayOfMonth(1);
+    }
+
+    public LocalDate getEndDate() {
+        return date.withDayOfMonth(date.lengthOfMonth());
+    }
 }
