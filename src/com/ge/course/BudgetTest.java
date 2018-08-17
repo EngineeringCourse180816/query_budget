@@ -103,7 +103,7 @@ public class BudgetTest {
     }
 
     private void assertTotalEquals(int expected, LocalDate start, LocalDate end) {
-        int actual = budgetCalculator.queryBudget(start, end);
+        long actual = budgetCalculator.queryBudget(start, end);
 
         assertEquals(expected, actual);
     }

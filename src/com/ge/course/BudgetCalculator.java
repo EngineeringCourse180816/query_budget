@@ -13,38 +13,39 @@ public class BudgetCalculator {
         budgetDao = dao;
     }
 
-    public int queryBudget(LocalDate startDate, LocalDate endDate) {
-        int calculatedBudget = 0;
+    public long queryBudget(LocalDate startDate, LocalDate endDate) {
         long totalDays = DAYS.between(startDate, endDate) + 1;
 
         if (YearMonth.from(startDate).equals(YearMonth.from(endDate))) {
-            calculatedBudget = (int) (getAmountOfBudgetMonth(startDate) / startDate.lengthOfMonth() * totalDays);
-        } else {
-            int firstMounthDays = (int) DAYS.between(startDate, LocalDate.of(startDate.getYear(), startDate.getMonth(), startDate.lengthOfMonth())) + 1;
-            calculatedBudget += (int) (getAmountOfBudgetMonth(startDate)) / startDate.lengthOfMonth() * firstMounthDays;
+            return getAmountOfBudgetMonth(startDate) / startDate.lengthOfMonth() * totalDays;
+        }
 
-            int lastMonthDays = (int) DAYS.between(LocalDate.of(endDate.getYear(), endDate.getMonth(), 1), endDate) + 1;
-            calculatedBudget += (int) (getAmountOfBudgetMonth(endDate)) / endDate.lengthOfMonth() * lastMonthDays;
-            long daysLeft = totalDays;
-            daysLeft = daysLeft - firstMounthDays - lastMonthDays;
+        long calculatedBudget = 0;
 
-            LocalDate currentStartDate = startDate;
-            while (daysLeft != 0) {
-                LocalDate date;
-                if (currentStartDate.getMonthValue() == 12) {
-                    date = LocalDate.of(currentStartDate.getYear() + 1, 1, 1);
-                    calculatedBudget += getAmountOfBudgetMonth(date);
-                } else {
-                    date = LocalDate.of(currentStartDate.getYear(), currentStartDate.getMonthValue() + 1, 1);
-                    calculatedBudget += getAmountOfBudgetMonth(date);
-                }
-                daysLeft -= date.lengthOfMonth();
-                currentStartDate = date;
+        long firstMonthDays = DAYS.between(startDate, startDate.withDayOfMonth(startDate.lengthOfMonth())) + 1;
+        calculatedBudget += getAmountOfBudgetMonth(startDate) / startDate.lengthOfMonth() * firstMonthDays;
 
+        int lastMonthDays = (int) DAYS.between(LocalDate.of(endDate.getYear(), endDate.getMonth(), 1), endDate) + 1;
+        calculatedBudget += (int) (getAmountOfBudgetMonth(endDate)) / endDate.lengthOfMonth() * lastMonthDays;
+
+        long daysLeft = totalDays;
+        daysLeft = daysLeft - firstMonthDays - lastMonthDays;
+
+        LocalDate currentStartDate = startDate;
+        while (daysLeft != 0) {
+            LocalDate date;
+            if (currentStartDate.getMonthValue() == 12) {
+                date = LocalDate.of(currentStartDate.getYear() + 1, 1, 1);
+                calculatedBudget += getAmountOfBudgetMonth(date);
+            } else {
+                date = LocalDate.of(currentStartDate.getYear(), currentStartDate.getMonthValue() + 1, 1);
+                calculatedBudget += getAmountOfBudgetMonth(date);
             }
-
+            daysLeft -= date.lengthOfMonth();
+            currentStartDate = date;
 
         }
+
         return calculatedBudget;
 
     }
