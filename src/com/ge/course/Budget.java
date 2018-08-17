@@ -3,23 +3,27 @@ package com.ge.course;
 import java.time.LocalDate;
 
 public class Budget {
-    private int budget;
+    private int amount;
     private LocalDate date;
 
-    public Budget(LocalDate date, int budget) {
+    public Budget(LocalDate date, int amount) {
         this.date = date;
-        this.budget = budget;
+        this.amount = amount;
     }
 
     public LocalDate getDate() {
         return date;
     }
 
-    public int getBudget() {
-        return budget;
+    public int getAmount() {
+        return amount;
     }
 
     public void setBudget(int budget) {
-        this.budget = budget;
+        amount = budget;
+    }
+
+    public int getDailyAmount() {
+        return amount / date.lengthOfMonth();
     }
 }
