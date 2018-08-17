@@ -3,8 +3,6 @@ package com.ge.course;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-
 public class BudgetCalculator {
 
     private BudgetDao budgetDao;
@@ -14,23 +12,26 @@ public class BudgetCalculator {
     }
 
     public long queryBudget(LocalDate startDate, LocalDate endDate) {
+        return queryTotal(new Period(startDate, endDate));
+    }
 
-        if (YearMonth.from(startDate).equals(YearMonth.from(endDate))) {
-            Budget budget = getAmountOfBudgetMonth(startDate);
-            return budget.getDailyAmount() * (DAYS.between(startDate, endDate) + 1);
+    private long queryTotal(Period period) {
+        if (YearMonth.from(period.getStartDate()).equals(YearMonth.from(period.getEndDate()))) {
+            Budget budget = getAmountOfBudgetMonth(period.getStartDate());
+            return budget.getDailyAmount() * period.getDayCount();
         }
 
         long calculatedBudget = 0;
 
-        Budget firstBudget = getAmountOfBudgetMonth(startDate);
-        calculatedBudget += firstBudget.getDailyAmount() * (DAYS.between(startDate, firstBudget.getEndDate()) + 1);
+        Budget firstBudget = getAmountOfBudgetMonth(period.getStartDate());
+        calculatedBudget += firstBudget.getDailyAmount() * new Period(period.getStartDate(), firstBudget.getEndDate()).getDayCount();
 
-        Budget lastBudget = getAmountOfBudgetMonth(endDate);
-        calculatedBudget += lastBudget.getDailyAmount() * (DAYS.between(lastBudget.getStartDate(), endDate) + 1);
+        Budget lastBudget = getAmountOfBudgetMonth(period.getEndDate());
+        calculatedBudget += lastBudget.getDailyAmount() * new Period(lastBudget.getStartDate(), period.getEndDate()).getDayCount();
 
-        for (LocalDate currentStartDate = startDate.plusMonths(1).withDayOfMonth(1); !YearMonth.from(currentStartDate).equals(YearMonth.from(endDate)); currentStartDate = currentStartDate.plusMonths(1)) {
+        for (LocalDate currentStartDate = period.getStartDate().plusMonths(1).withDayOfMonth(1); !YearMonth.from(currentStartDate).equals(YearMonth.from(period.getEndDate())); currentStartDate = currentStartDate.plusMonths(1)) {
             Budget budget = getAmountOfBudgetMonth(currentStartDate);
-            calculatedBudget += budget.getDailyAmount() * (DAYS.between(budget.getStartDate(), budget.getEndDate()) + 1);
+            calculatedBudget += budget.getDailyAmount() * new Period(budget.getStartDate(), budget.getEndDate()).getDayCount();
         }
 
         return calculatedBudget;
