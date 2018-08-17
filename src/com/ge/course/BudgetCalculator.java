@@ -18,20 +18,20 @@ public class BudgetCalculator {
     private long queryTotal(Period period) {
         if (YearMonth.from(period.getStartDate()).equals(YearMonth.from(period.getEndDate()))) {
             Budget budget = getAmountOfBudgetMonth(period.getStartDate());
-            return budget.getDailyAmount() * period.getDayCount();
+            return budget.getDailyAmount() * period.getOverlappingDayCount(budget.getPeriod());
         }
 
         long calculatedBudget = 0;
 
         Budget firstBudget = getAmountOfBudgetMonth(period.getStartDate());
-        calculatedBudget += firstBudget.getDailyAmount() * new Period(period.getStartDate(), firstBudget.getEndDate()).getDayCount();
+        calculatedBudget += firstBudget.getDailyAmount() * period.getOverlappingDayCount(firstBudget.getPeriod());
 
         Budget lastBudget = getAmountOfBudgetMonth(period.getEndDate());
-        calculatedBudget += lastBudget.getDailyAmount() * new Period(lastBudget.getStartDate(), period.getEndDate()).getDayCount();
+        calculatedBudget += lastBudget.getDailyAmount() * period.getOverlappingDayCount(lastBudget.getPeriod());
 
         for (LocalDate currentStartDate = period.getStartDate().plusMonths(1).withDayOfMonth(1); !YearMonth.from(currentStartDate).equals(YearMonth.from(period.getEndDate())); currentStartDate = currentStartDate.plusMonths(1)) {
             Budget budget = getAmountOfBudgetMonth(currentStartDate);
-            calculatedBudget += budget.getDailyAmount() * new Period(budget.getStartDate(), budget.getEndDate()).getDayCount();
+            calculatedBudget += budget.getDailyAmount() * period.getOverlappingDayCount(budget.getPeriod());
         }
 
         return calculatedBudget;
