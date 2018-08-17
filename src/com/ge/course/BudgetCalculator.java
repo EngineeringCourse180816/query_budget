@@ -17,30 +17,33 @@ public class BudgetCalculator {
         long totalDays = DAYS.between(startDate, endDate) + 1;
 
         if (YearMonth.from(startDate).equals(YearMonth.from(endDate))) {
-            return getAmountOfBudgetMonth(startDate) / startDate.lengthOfMonth() * totalDays;
+            Budget budget = getAmountOfBudgetMonth(startDate);
+            return budget.getBudget() / budget.getDate().lengthOfMonth() * totalDays;
         }
 
         long calculatedBudget = 0;
 
         long firstMonthDays = DAYS.between(startDate, startDate.withDayOfMonth(startDate.lengthOfMonth())) + 1;
-        calculatedBudget += getAmountOfBudgetMonth(startDate) / startDate.lengthOfMonth() * firstMonthDays;
+        Budget firstBudget = getAmountOfBudgetMonth(startDate);
+        calculatedBudget += firstBudget.getBudget() / firstBudget.getDate().lengthOfMonth() * firstMonthDays;
 
         long lastMonthDays = DAYS.between(endDate.withDayOfMonth(1), endDate) + 1;
-        calculatedBudget += getAmountOfBudgetMonth(endDate) / endDate.lengthOfMonth() * lastMonthDays;
+        Budget lastBudget = getAmountOfBudgetMonth(endDate);
+        calculatedBudget += lastBudget.getBudget() / lastBudget.getDate().lengthOfMonth() * lastMonthDays;
 
-        for (LocalDate currentStartDate = startDate.plusMonths(1).withDayOfMonth(1); !YearMonth.from(currentStartDate).equals(YearMonth.from(endDate)); currentStartDate.plusMonths(1)) {
-            calculatedBudget += getAmountOfBudgetMonth(currentStartDate);
+        for (LocalDate currentStartDate = startDate.plusMonths(1).withDayOfMonth(1); !YearMonth.from(currentStartDate).equals(YearMonth.from(endDate)); currentStartDate = currentStartDate.plusMonths(1)) {
+            calculatedBudget += getAmountOfBudgetMonth(currentStartDate).getBudget();
         }
 
         return calculatedBudget;
     }
 
-    private int getAmountOfBudgetMonth(LocalDate date) {
+    private Budget getAmountOfBudgetMonth(LocalDate date) {
         for (Budget budget : budgetDao.findAll()) {
             if (YearMonth.from(budget.getDate()).equals(YearMonth.from(date))) {
-                return budget.getBudget();
+                return budget;
             }
         }
-        return 0;
+        return new Budget(date, 0);
     }
 }
