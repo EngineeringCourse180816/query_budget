@@ -11,31 +11,23 @@ public class Budget {
         this.amount = amount;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public long getOverlappingAmount(Period period) {
+        return getDailyAmount() * period.getOverlappingDayCount(getPeriod());
     }
 
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setBudget(int budget) {
-        amount = budget;
-    }
-
-    public int getDailyAmount() {
+    private int getDailyAmount() {
         return amount / date.lengthOfMonth();
     }
 
-    public LocalDate getStartDate() {
+    private LocalDate getStartDate() {
         return date.withDayOfMonth(1);
     }
 
-    public LocalDate getEndDate() {
+    private LocalDate getEndDate() {
         return date.withDayOfMonth(date.lengthOfMonth());
     }
 
-    public Period getPeriod() {
+    private Period getPeriod() {
         return new Period(getStartDate(), getEndDate());
     }
 }

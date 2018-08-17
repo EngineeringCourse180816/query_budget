@@ -15,13 +15,9 @@ public class BudgetCalculator {
     }
 
     private long queryTotal(Period period) {
-        long calculatedBudget = 0;
-
-        for (Budget budget : budgetDao.findAll()) {
-            calculatedBudget += budget.getDailyAmount() * period.getOverlappingDayCount(budget.getPeriod());
-        }
-
-        return calculatedBudget;
+        return budgetDao.findAll().stream()
+                .mapToLong(budget -> budget.getOverlappingAmount(period))
+                .sum();
     }
 
 }
